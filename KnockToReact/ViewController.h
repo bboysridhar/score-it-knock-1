@@ -11,6 +11,7 @@
 #import "KnockHelper.h"
 
 @interface ViewController : UIViewController <KnockHelperProtocol>
+@property (weak, nonatomic) IBOutlet UILabel *sensitivityLabel;
 
 @end
 

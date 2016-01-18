@@ -25,10 +25,12 @@
 #pragma mark - Action methods
 - (IBAction)plusButton_Touched:(id)sender {
     [[KnockHelper sharedInstance] incrementLimitDifference:0.1];
+    self.sensitivityLabel.text = [NSString stringWithFormat:@"%.01f",[[KnockHelper sharedInstance] limitDifference]];
 }
 
 - (IBAction)minusButton_Touched:(id)sender {
     [[KnockHelper sharedInstance] decrementLimitDifference:0.1];
+    self.sensitivityLabel.text = [NSString stringWithFormat:@"%.01f",[[KnockHelper sharedInstance] limitDifference]];
 }
 
 #pragma mark - KnockHelperDelegate

@@ -155,6 +155,9 @@
                             </mask>
                         </variation>
                     </view>
+                    <connections>
+                        <outlet property="sensitivityLabel" destination="GJh-uE-Obv" id="711-q4-Yeu"/>
+                    </connections>
                 </viewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="dkx-z0-nzr" sceneMemberID="firstResponder"/>
             </objects>
