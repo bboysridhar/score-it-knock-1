@@ -79,7 +79,6 @@
 
 - (void)startMotion{
     self.motionManager = [[CMMotionManager alloc] init];
-    
     NSTimeInterval updateFrequency = 40; // 0.025 -> 40 Hz(40 times a second)
     self.motionManager.accelerometerUpdateInterval = 1.0/updateFrequency;// 40 Hz - 40 times a second
     
@@ -99,62 +98,63 @@
     self.backgroundAccelerometerTask = [application beginBackgroundTaskWithExpirationHandler:^{
     }];
     
-    [self.motionManager startAccelerometerUpdatesToQueue:[[NSOperationQueue alloc] init]
-                                             withHandler:^(CMAccelerometerData *data, NSError *error) {
+    [self.motionManager startDeviceMotionUpdatesToQueue:[[NSOperationQueue alloc] init]
+                                             withHandler:^(CMDeviceMotion *data, NSError *error) {
          dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_HIGH, 0), ^{
              [self methodToBackgroundInteraction:data];
          });
      }];
 }
 
-- (void)methodToBackgroundInteraction : (CMAccelerometerData*)data{
+- (void)methodToBackgroundInteraction : (CMDeviceMotion*)data{
     NSTimeInterval seconds = [NSDate timeIntervalSinceReferenceDate];
     double milliseconds = seconds*1000;
     
     // For High-Pass-Filter
     self.prevXVal = self.currentXVal;
-    self.currentXVal = data.acceleration.x; // X-axis
+    self.currentXVal = data.userAcceleration.x; // X-axis
     self.diffX = self.currentXVal - self.prevXVal;
     
     self.prevYVal = self.currentYVal;
-    self.currentYVal = data.acceleration.y; // Y-axis
+    self.currentYVal = data.userAcceleration.y; // Y-axis
     self.diffY = self.currentYVal - self.prevYVal;
     
     self.prevZVal = self.currentZVal;
-    self.currentZVal = data.acceleration.z; // Z-axis
+    self.currentZVal = data.userAcceleration.z; // Z-axis
     self.diffZ = self.currentZVal - self.prevZVal;
     
     
     //pause between two attempts to give 3 knocks
     //if(milliseconds - self.lastPush > 5000){
-    float diferenceZ = data.acceleration.z - self.lastCapturedData.acceleration.z;
-    self.lastCapturedData = data;
-    NSLog(@"%f", diferenceZ);
+    //double diferenceZ = data.userAcceleration.z - self.lastCapturedData.acceleration.z;
+    //self.lastCapturedData = [data userAcceleration];
+    //NSLog(@"%f", diferenceZ);
     
     double limitDiference = [self limitDifference];
     // Eliminating the other forces(X and Y) below some limit to filter out shaking motions
     if((self.diffX < self.thresholdX && self.diffY < self.thresholdY) &&
-       (diferenceZ > limitDiference || diferenceZ < -limitDiference)){
+       (self.diffZ > limitDiference || self.diffZ < -limitDiference)){
         //NSLog(@"Z: %f",diferenceZ);
         if(milliseconds - self.mlsFirst < 2000 && milliseconds - self.mlsFirst > 300){
             if(milliseconds - self.mlsSecond < 1000 && milliseconds - self.mlsSecond > 300){
                 if(milliseconds - self.mlsThird > 300){
                     //self.lastPush = milliseconds;
                     self.mlsThird = milliseconds;
-                    NSLog(@"Third knock: %f (operation succeded)",diferenceZ);
-                    [self.delegate knockPerformed:3 :(double)diferenceZ :milliseconds];
+                    NSLog(@"Third knock: %f (operation succeded)",self.diffZ);
+                    [self.delegate knockPerformed:3 :self.diffZ :data.gravity];
                 }
             }
             else if(milliseconds - self.mlsSecond > 300){
-                NSLog(@"Second knock: %f",diferenceZ);
+                NSLog(@"Second knock: %f",self.diffZ);
                 self.mlsSecond = milliseconds;
-                [self.delegate knockPerformed:2 :(double)diferenceZ :milliseconds];
+                [self.delegate knockPerformed:2 :self.diffZ :data.gravity];
             }
         }
         else if(milliseconds - self.mlsFirst > 300){
             self.mlsFirst = milliseconds;
-            NSLog(@"First knock: %f",diferenceZ);
-            [self.delegate knockPerformed:1 :(double)diferenceZ :milliseconds];
+            NSLog(@"First knock: %f",self.diffZ);
+            
+            [self.delegate knockPerformed:1 :self.diffZ :data.gravity];
         }
     }
     //}
