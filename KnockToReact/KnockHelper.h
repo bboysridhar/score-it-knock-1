@@ -13,7 +13,7 @@
 
 @protocol KnockHelperProtocol <NSObject>
 
-- (void)knockPerformed:(int)knockCount;
+- (void)knockPerformed:(int)knockCount :(double)z :(double)milliseconds;
 
 @end
 
@@ -31,6 +31,18 @@
 @property double lastPush;
 @property (nonatomic) double limitDifference;
 @property (nonatomic, strong) CMAccelerometerData *lastCapturedData;
+//For high pass filter
+@property double prevXVal;
+@property double currentXVal;
+@property double diffX;
+@property double thresholdX;
+@property double prevYVal;
+@property double currentYVal;
+@property double diffY;
+@property double thresholdY;
+@property double prevZVal;
+@property double currentZVal;
+@property double diffZ;
 
 - (void)startMotion;
 - (void)stopMotion;
