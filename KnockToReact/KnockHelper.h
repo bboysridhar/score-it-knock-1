@@ -13,7 +13,7 @@
 
 @protocol KnockHelperProtocol <NSObject>
 
-- (void)knockPerformed:(int)knockCount :(double)z :(CMAcceleration)gravity;
+- (void)knockPerformed:(int)knockCount :(double)z :(CMAttitude*)attitude;
 
 @end
 

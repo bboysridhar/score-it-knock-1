@@ -141,20 +141,19 @@
                     //self.lastPush = milliseconds;
                     self.mlsThird = milliseconds;
                     NSLog(@"Third knock: %f (operation succeded)",self.diffZ);
-                    [self.delegate knockPerformed:3 :self.diffZ :data.gravity];
+                    [self.delegate knockPerformed:3 :self.diffZ :data.attitude];
                 }
             }
             else if(milliseconds - self.mlsSecond > 300){
                 NSLog(@"Second knock: %f",self.diffZ);
                 self.mlsSecond = milliseconds;
-                [self.delegate knockPerformed:2 :self.diffZ :data.gravity];
+                [self.delegate knockPerformed:2 :self.diffZ :data.attitude];
             }
         }
         else if(milliseconds - self.mlsFirst > 300){
             self.mlsFirst = milliseconds;
             NSLog(@"First knock: %f",self.diffZ);
-            
-            [self.delegate knockPerformed:1 :self.diffZ :data.gravity];
+            [self.delegate knockPerformed:1 :self.diffZ :data.attitude];
         }
     }
     //}
