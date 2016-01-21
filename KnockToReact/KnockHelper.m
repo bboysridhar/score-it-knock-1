@@ -135,25 +135,32 @@
     if((self.diffX < self.thresholdX && self.diffY < self.thresholdY) &&
        (self.diffZ > limitDiference || self.diffZ < -limitDiference)){
         //NSLog(@"Z: %f",diferenceZ);
+        double totalAcceleration = sqrt(pow(data.userAcceleration.x, 2) + pow(data.userAcceleration.y, 2) + pow(data.userAcceleration.z, 2));
         if(milliseconds - self.mlsFirst < 2000 && milliseconds - self.mlsFirst > 300){
             if(milliseconds - self.mlsSecond < 1000 && milliseconds - self.mlsSecond > 300){
                 if(milliseconds - self.mlsThird > 300){
-                    //self.lastPush = milliseconds;
-                    self.mlsThird = milliseconds;
-                    NSLog(@"Third knock: %f (operation succeded)",self.diffZ);
-                    [self.delegate knockPerformed:3 :self.diffZ :data.attitude];
+                    if(totalAcceleration > 4 && totalAcceleration < 5.5){
+                        //self.lastPush = milliseconds;
+                        self.mlsThird = milliseconds;
+                        NSLog(@"Third knock: %f (operation succeded)",self.diffZ);
+                        [self.delegate knockPerformed:3 :self.currentZVal :totalAcceleration];
+                    }
                 }
             }
             else if(milliseconds - self.mlsSecond > 300){
-                NSLog(@"Second knock: %f",self.diffZ);
-                self.mlsSecond = milliseconds;
-                [self.delegate knockPerformed:2 :self.diffZ :data.attitude];
+                if(totalAcceleration > 4 && totalAcceleration < 5.5){
+                    NSLog(@"Second knock: %f",self.diffZ);
+                    self.mlsSecond = milliseconds;
+                    [self.delegate knockPerformed:2 :self.currentZVal :totalAcceleration];
+                }
             }
         }
         else if(milliseconds - self.mlsFirst > 300){
-            self.mlsFirst = milliseconds;
-            NSLog(@"First knock: %f",self.diffZ);
-            [self.delegate knockPerformed:1 :self.diffZ :data.attitude];
+            if(totalAcceleration > 4 && totalAcceleration < 5.5){
+                self.mlsFirst = milliseconds;
+                NSLog(@"First knock: %f",self.diffZ);
+                [self.delegate knockPerformed:1 :self.currentZVal :totalAcceleration];
+            }
         }
     }
     //}

@@ -34,10 +34,11 @@
 }
 
 #pragma mark - KnockHelperDelegate
-- (void)knockPerformed:(int)knockCount :(double)z :(CMAttitude*)attitude{
+- (void)knockPerformed:(double)knockCount :(double)z :(double)totalAcceleration{
     UILocalNotification *notification = [[UILocalNotification alloc]init];
 //    NSString *message = [NSString stringWithFormat: @"Latitude: %f - Longitude: %f", [SingletonLocation sharedInstance].currentLocation.coordinate.latitude, [SingletonLocation sharedInstance].currentLocation.coordinate.longitude];
-    NSString *message = [NSString stringWithFormat:@"Score: %d \n Z: %f \n roll: %.01f pitch: %.01f yaw: %.01f]", knockCount, z,attitude.roll, attitude.pitch, attitude.yaw];
+    NSString *message = [NSString stringWithFormat:@"Score: %.01f \n Z: %.01f \n Total Acceleration: %.01fg",knockCount, z, totalAcceleration];
+                         //knockCount, z, sqrt(pow(gravity.x, 2) + pow(gravity.y, 2) + pow(gravity.z, 2))];
     [notification setAlertBody:message];
     [notification setSoundName:UILocalNotificationDefaultSoundName];
     [[UIApplication sharedApplication]  setScheduledLocalNotifications:[NSArray arrayWithObject:notification]];
