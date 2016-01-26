@@ -13,7 +13,7 @@
 
 @protocol KnockHelperProtocol <NSObject>
 
-- (void)knockPerformed:(double)knockCount :(double)z :(double)totalAcceleration;
+- (void)knockPerformed:(double)knockCount z:(double)z totalAcceleration:(double)totalAcceleration pTotalAcceleration:(double)pTotalAcceleration;
 
 @end
 
@@ -30,6 +30,7 @@
 @property double mlsThird;
 @property double lastPush;
 @property (nonatomic) double limitDifference;
+@property CMAcceleration lastCapturedData;
 
 //For high pass filter
 @property double prevXVal;

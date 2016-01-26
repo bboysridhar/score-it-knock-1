@@ -17,6 +17,7 @@
 		38F7B91B1BDECF3900F20EB8 /* KnockToReactUITests.m in Sources */ = {isa = PBXBuildFile; fileRef = 38F7B91A1BDECF3900F20EB8 /* KnockToReactUITests.m */; };
 		38F7B92A1BDED06F00F20EB8 /* KnockHelper.m in Sources */ = {isa = PBXBuildFile; fileRef = 38F7B9291BDED06F00F20EB8 /* KnockHelper.m */; };
 		38F7B92D1BDED12900F20EB8 /* SingletonLocation.m in Sources */ = {isa = PBXBuildFile; fileRef = 38F7B92C1BDED12900F20EB8 /* SingletonLocation.m */; };
+		4F40BD891C56CEAE00D6EDEB /* CoreMotion.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 4F40BD881C56CEAE00D6EDEB /* CoreMotion.framework */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -57,6 +58,7 @@
 		38F7B9291BDED06F00F20EB8 /* KnockHelper.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = KnockHelper.m; sourceTree = "<group>"; };
 		38F7B92B1BDED12900F20EB8 /* SingletonLocation.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SingletonLocation.h; sourceTree = "<group>"; };
 		38F7B92C1BDED12900F20EB8 /* SingletonLocation.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = SingletonLocation.m; sourceTree = "<group>"; };
+		4F40BD881C56CEAE00D6EDEB /* CoreMotion.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreMotion.framework; path = System/Library/Frameworks/CoreMotion.framework; sourceTree = SDKROOT; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -64,6 +66,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				4F40BD891C56CEAE00D6EDEB /* CoreMotion.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -87,6 +90,7 @@
 		38F7B8E91BDECF3900F20EB8 = {
 			isa = PBXGroup;
 			children = (
+				4F40BD881C56CEAE00D6EDEB /* CoreMotion.framework */,
 				38F7B8F41BDECF3900F20EB8 /* KnockToReact */,
 				38F7B90E1BDECF3900F20EB8 /* KnockToReactTests */,
 				38F7B9191BDECF3900F20EB8 /* KnockToReactUITests */,

@@ -108,6 +108,7 @@
 
 - (void)methodToBackgroundInteraction : (CMDeviceMotion*)data{
     NSTimeInterval seconds = [NSDate timeIntervalSinceReferenceDate];
+    
     double milliseconds = seconds*1000;
     
     // For High-Pass-Filter
@@ -131,39 +132,48 @@
     //NSLog(@"%f", diferenceZ);
     
     double limitDiference = [self limitDifference];
+    
+    double totalAcceleration = sqrt(pow(data.userAcceleration.x, 2) + pow(data.userAcceleration.y, 2) + pow(data.userAcceleration.z, 2));
+    double pTotalAcceleration = sqrt(pow(self.lastCapturedData.x, 2) + pow(self.lastCapturedData.y, 2) + pow(self.lastCapturedData.z, 2));
+    self.lastCapturedData = data.userAcceleration;
+    
+    // the delta should not be more than 2G(to exclude false knock), to acknowledge a knock
+    double delta = MAX(totalAcceleration, pTotalAcceleration) - MIN(totalAcceleration, pTotalAcceleration);
+    
     // Eliminating the other forces(X and Y) below some limit to filter out shaking motions
     if((self.diffX < self.thresholdX && self.diffY < self.thresholdY) &&
-       (self.diffZ > limitDiference || self.diffZ < -limitDiference)){
+       (self.diffZ > limitDiference || self.diffZ < -limitDiference) &&
+       delta < 2){
         //NSLog(@"Z: %f",diferenceZ);
-        double totalAcceleration = sqrt(pow(data.userAcceleration.x, 2) + pow(data.userAcceleration.y, 2) + pow(data.userAcceleration.z, 2));
+        
         if(milliseconds - self.mlsFirst < 2000 && milliseconds - self.mlsFirst > 300){
             if(milliseconds - self.mlsSecond < 1000 && milliseconds - self.mlsSecond > 300){
                 if(milliseconds - self.mlsThird > 300){
-                    if(totalAcceleration > 4 && totalAcceleration < 5.5){
+                    //if(totalAcceleration >= pTotalAcceleration){
                         //self.lastPush = milliseconds;
                         self.mlsThird = milliseconds;
-                        NSLog(@"Third knock: %f (operation succeded)",self.diffZ);
-                        [self.delegate knockPerformed:3 :self.currentZVal :totalAcceleration];
-                    }
+                        //NSLog(@"Third knock: %f (operation succeded)",self.diffZ);
+                        [self.delegate knockPerformed:3 z:data.userAcceleration.z totalAcceleration:totalAcceleration pTotalAcceleration:pTotalAcceleration];
+                    
+                    //}
                 }
             }
             else if(milliseconds - self.mlsSecond > 300){
-                if(totalAcceleration > 4 && totalAcceleration < 5.5){
-                    NSLog(@"Second knock: %f",self.diffZ);
+                //if(totalAcceleration >= pTotalAcceleration){
+                    //NSLog(@"Second knock: %f",self.diffZ);
                     self.mlsSecond = milliseconds;
-                    [self.delegate knockPerformed:2 :self.currentZVal :totalAcceleration];
-                }
+                    [self.delegate knockPerformed:2 z:data.userAcceleration.z totalAcceleration:totalAcceleration pTotalAcceleration:pTotalAcceleration];
+                //}
             }
         }
         else if(milliseconds - self.mlsFirst > 300){
-            if(totalAcceleration > 4 && totalAcceleration < 5.5){
+            //if(totalAcceleration >= pTotalAcceleration){
                 self.mlsFirst = milliseconds;
-                NSLog(@"First knock: %f",self.diffZ);
-                [self.delegate knockPerformed:1 :self.currentZVal :totalAcceleration];
-            }
+                //NSLog(@"First knock: %f",self.diffZ);
+                [self.delegate knockPerformed:1 z:data.userAcceleration.z totalAcceleration: totalAcceleration pTotalAcceleration:pTotalAcceleration];
+            //}
         }
-    }
     //}
+    }
 }
-
 @end
