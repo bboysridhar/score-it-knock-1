@@ -79,10 +79,9 @@
 
 - (void)startMotion{
     self.motionManager = [[CMMotionManager alloc] init];
+
     NSTimeInterval updateFrequency = 40; // 0.025 -> 40 Hz(40 times a second)
     self.motionManager.accelerometerUpdateInterval = 1.0/updateFrequency;// 40 Hz - 40 times a second
-    
-    // Initialize High-Pass-Filter
     
     [self startBackgroundInteractionWithMotion];
 }
@@ -124,15 +123,9 @@
     self.currentZVal = data.userAcceleration.z; // Z-axis
     self.diffZ = self.currentZVal - self.prevZVal;
     
-    
-    //pause between two attempts to give 3 knocks
-    //if(milliseconds - self.lastPush > 5000){
-    //double diferenceZ = data.userAcceleration.z - self.lastCapturedData.acceleration.z;
-    //self.lastCapturedData = [data userAcceleration];
-    //NSLog(@"%f", diferenceZ);
-    
     double limitDiference = [self limitDifference];
     
+    // Pythagorean theorem
     double totalAcceleration = sqrt(pow(data.userAcceleration.x, 2) + pow(data.userAcceleration.y, 2) + pow(data.userAcceleration.z, 2));
     double pTotalAcceleration = sqrt(pow(self.lastCapturedData.x, 2) + pow(self.lastCapturedData.y, 2) + pow(self.lastCapturedData.z, 2));
     self.lastCapturedData = data.userAcceleration;
@@ -144,36 +137,23 @@
     if((self.diffX < self.thresholdX && self.diffY < self.thresholdY) &&
        (self.diffZ > limitDiference || self.diffZ < -limitDiference) &&
        delta < 2){
-        //NSLog(@"Z: %f",diferenceZ);
         
         if(milliseconds - self.mlsFirst < 2000 && milliseconds - self.mlsFirst > 300){
             if(milliseconds - self.mlsSecond < 1000 && milliseconds - self.mlsSecond > 300){
                 if(milliseconds - self.mlsThird > 300){
-                    //if(totalAcceleration >= pTotalAcceleration){
-                        //self.lastPush = milliseconds;
-                        self.mlsThird = milliseconds;
-                        //NSLog(@"Third knock: %f (operation succeded)",self.diffZ);
-                        [self.delegate knockPerformed:3 z:data.userAcceleration.z totalAcceleration:totalAcceleration pTotalAcceleration:pTotalAcceleration];
-                    
-                    //}
+                    self.mlsThird = milliseconds;
+                    [self.delegate knockPerformed:3 z:data.userAcceleration.z totalAcceleration:totalAcceleration pTotalAcceleration:pTotalAcceleration];
                 }
             }
             else if(milliseconds - self.mlsSecond > 300){
-                //if(totalAcceleration >= pTotalAcceleration){
-                    //NSLog(@"Second knock: %f",self.diffZ);
-                    self.mlsSecond = milliseconds;
-                    [self.delegate knockPerformed:2 z:data.userAcceleration.z totalAcceleration:totalAcceleration pTotalAcceleration:pTotalAcceleration];
-                //}
+                self.mlsSecond = milliseconds;
+                [self.delegate knockPerformed:2 z:data.userAcceleration.z totalAcceleration:totalAcceleration pTotalAcceleration:pTotalAcceleration];
             }
         }
         else if(milliseconds - self.mlsFirst > 300){
-            //if(totalAcceleration >= pTotalAcceleration){
-                self.mlsFirst = milliseconds;
-                //NSLog(@"First knock: %f",self.diffZ);
-                [self.delegate knockPerformed:1 z:data.userAcceleration.z totalAcceleration: totalAcceleration pTotalAcceleration:pTotalAcceleration];
-            //}
+            self.mlsFirst = milliseconds;
+            [self.delegate knockPerformed:1 z:data.userAcceleration.z totalAcceleration: totalAcceleration pTotalAcceleration:pTotalAcceleration];
         }
-    //}
     }
 }
 @end
